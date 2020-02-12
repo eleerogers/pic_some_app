@@ -3,8 +3,16 @@ import React, { useState, useEffect } from "react";
 const Context = React.createContext();
 
 function ContextProvider(props) {
-  const [photosArr, setPhotosArr] = useState([]);
-  const [cartItems, setCartItems] = useState([]);
+  const [photosArr, setPhotosArr] = useState(JSON.parse(localStorage.getItem('photosArrLocalStorage')) || []);
+  const [cartItems, setCartItems] = useState(JSON.parse(localStorage.getItem('cartItemsLocalStorage')) || []);
+
+  useEffect(() => {
+    localStorage.setItem('cartItemsLocalStorage', JSON.stringify(cartItems));
+  }, [cartItems])
+
+  useEffect(() => {
+    localStorage.setItem('photosArrLocalStorage', JSON.stringify(photosArr));
+  }, [photosArr])
 
   function addToCart(img) {
     setCartItems(cart => [...cart, img]);
@@ -29,7 +37,9 @@ function ContextProvider(props) {
   }
 
   useEffect(() => {
-    fetchData()
+    if (photosArr.length === 0) {
+      fetchData();
+    }
   }, []);
 
   function toggleFavorited(id) {
